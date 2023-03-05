@@ -13,7 +13,7 @@ pool:
 variables:
   - name: 'deployment_environment_name'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-      value: 'production'
+      value: ''
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       value: '$(System.PullRequest.PullRequestNumber)'
       # value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
