@@ -16,6 +16,11 @@ variables:
       value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+  - name: 'deployment_environment_name'
+      ${{if eq(variables['branchName'], 'main')}}:
+      value: 'production'
+      ${{if ne(variables['branchName'], 'main')}}:
+      value: $(branchName)
 
 steps:
 # - task: NodeTool@0
