@@ -10,6 +10,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+
 steps:
 # - task: NodeTool@0
 #   inputs:
@@ -43,6 +46,7 @@ steps:
 
 - bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
+   echo 'branch name: ' $(BRANCH_NAME)
 
 # Delete staging slot
 - bash: |
