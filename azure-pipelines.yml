@@ -11,7 +11,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+  BRANCH_NAME: $[replace(variables['Build.SourceBranchName'], 'refs/heads/', '')]
 
 steps:
 # - task: NodeTool@0
