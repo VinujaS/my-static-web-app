@@ -23,12 +23,12 @@ variables:
       value: $(branchName)
 
 steps:
-# - bash: |
-#   if [[ "$branchName" == 'main' ]] 
-#     echo "##vso[task.setvariable deployment_environment_name="production"]"
-#   else
-#     echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
-#   echo 'deployment_environment_name: ' $deployment_environment_name
+- bash: |
+  if [[ "$branchName" == 'main' ]] 
+    echo "##vso[task.setvariable deployment_environment_name="production"]"
+  else
+    echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
+  echo 'deployment_environment_name: ' $deployment_environment_name
 
 # - task: NodeTool@0
 #   inputs:
