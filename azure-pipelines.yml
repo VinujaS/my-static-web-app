@@ -66,7 +66,7 @@ steps:
    echo 'deployment_environment_name: ' $(deployment_environment_name)
    echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
 
-# Delete staging slot
+# Delete preview branch
 - bash: |
    # PR Closed, changes merged to main
    echo 'PR close, changes merged to main'
@@ -88,4 +88,6 @@ steps:
      --password $(SERVICE_PRINCIPAL_PASSWORD)
    echo 'Logged into Azure'
    echo ''
+
+   az staticwebapp environment delete -n ode-test-static-app --environment-name $(deployment_environment_name) --resource-group static-web-app-test --yes
   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'))
