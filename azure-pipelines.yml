@@ -22,7 +22,7 @@ variables:
     ${{if ne(variables['branchName'], 'main')}}:
       value: $(branchName)
 
-# steps:
+steps:
 # - bash: |
 #   if [[ "$branchName" == 'main' ]] 
 #     echo "##vso[task.setvariable deployment_environment_name="production"]"
