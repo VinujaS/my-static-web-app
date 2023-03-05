@@ -10,10 +10,6 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  servicePrincipal.name: TailspinVinu-Pipeline test-3c3c0194-6084-4ccc-8e1f-a2956bd10236
-  servicePrincipal.tenant: ca6c8e87-062c-4e26-9fe7-90ece01ce882
-
 steps:
 # - task: NodeTool@0
 #   inputs:
@@ -71,6 +67,10 @@ steps:
 
    # Login to Azure using service principal
    echo 'Logging into Azure with service principal...'
-   az login --identity --username 81331368-11d4-4ab5-847b-af9c770ee3a5
+   az login \
+     --service-principal \
+     --username $(servicePrincipal.name) \
+     --tenant $(servicePrincipal.tenant) \
+     --password $(SERVICE_PRINCIPAL_PASSWORD)
    echo 'Logged into Azure'
    echo ''
