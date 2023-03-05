@@ -11,7 +11,11 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  BRANCH_NAME: $[replace(variables['Build.SourceBranchName'], 'refs/heads/', '')]
+  - name: 'branchName'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+      value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+      value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
 steps:
 # - task: NodeTool@0
@@ -46,7 +50,9 @@ steps:
 
 - bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
-   echo 'branch name: ' $(BRANCH_NAME)
+   echo 'branch name: ' $(branchName)
+   echo 'Build.SourceBranch: ' $(Build.SourceBranch)
+   echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
 
 # Delete staging slot
 - bash: |
