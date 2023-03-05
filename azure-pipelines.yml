@@ -13,24 +13,25 @@ pool:
 variables:
   - name: 'branchName'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
-      value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+      ${{if eq([ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ], 'main')}}:
+        value: 'production'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
-  - name: 'deployment_environment_name'
-    ${{if eq(variables['branchName'], 'main')}}:
-      value: 'production'
-    ${{if ne(variables['branchName'], 'main')}}:
-      value: $(branchName)
+  # - name: 'deployment_environment_name'
+  #   ${{if eq(variables['branchName'], 'main')}}:
+  #     value: 'production'
+  #   ${{if ne(variables['branchName'], 'main')}}:
+  #     value: $(branchName)
 
 steps:
-- bash: |
-  if [[ "$branchName" == 'main' ]]
-  then
-    echo "##vso[task.setvariable deployment_environment_name="production"]"
-  else
-    echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
-  fi
-  echo 'deployment_environment_name: ' $deployment_environment_name
+# - bash: |
+#   if [[ "$branchName" == 'main' ]]
+#   then
+#     echo "##vso[task.setvariable deployment_environment_name="production"]"
+#   else
+#     echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
+#   fi
+#   echo 'deployment_environment_name: ' $deployment_environment_name
 
 # - task: NodeTool@0
 #   inputs:
