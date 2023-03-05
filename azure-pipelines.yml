@@ -10,7 +10,24 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  - name: 'deployment_environment_name'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      value: 'production'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+      value: '$(System.PullRequest.PullRequestNumber)'
+      # value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+
 steps:
+# - bash: |
+#   if [[ "$branchName" == 'main' ]]
+#   then
+#     echo "##vso[task.setvariable deployment_environment_name="production"]"
+#   else
+#     echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
+#   fi
+#   echo 'deployment_environment_name: ' $deployment_environment_name
+
 - task: NodeTool@0
   inputs:
     versionSource: 'spec'
@@ -28,6 +45,7 @@ steps:
     output_location: 'build'
     verbose: true
     production_branch: 'main'
+    deployment_environment: $(deployment_environment_name)
   name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
@@ -41,18 +59,14 @@ steps:
     repositoryName: 'VinujaS/my-static-web-app'
     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
 
-# - task: AzureStaticWebApp@0
-#   inputs:
-#     app_location: 'react-app'
-#     output_location: 'build'
-#     verbose: true
-#     production_branch: 'main'
-#   name: 'SWA'
-#   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
-#   env:
-#     azure_static_web_apps_api_token: $(deployment-token)
+- bash: |
+   echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
+   echo 'Build.SourceBranch: ' $(Build.SourceBranch)
+   echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
+   echo 'deployment_environment_name: ' $(deployment_environment_name)
+   echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
 
-# Delete staging slot
+# Delete preview branch
 - bash: |
    # PR Closed, changes merged to main
    echo 'PR close, changes merged to main'
@@ -74,4 +88,6 @@ steps:
      --password $(SERVICE_PRINCIPAL_PASSWORD)
    echo 'Logged into Azure'
    echo ''
-  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
+
+   az staticwebapp environment delete -n ode-test-static-app --environment-name $(deployment_environment_name) --resource-group static-web-app-test --yes
+  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'))
