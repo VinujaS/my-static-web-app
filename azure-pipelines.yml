@@ -11,10 +11,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - name: 'branchName'
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
-      ${{if eq([ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ], 'main')}}:
-        value: 'production'
+  - name: 'deployment_environment_name'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      value: 'production'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
   # - name: 'deployment_environment_name'
@@ -65,7 +64,6 @@ steps:
 
 - bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
-   echo 'branch name: ' $(branchName)
    echo 'Build.SourceBranch: ' $(Build.SourceBranch)
    echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
    echo 'deployment_environment_name: ' $(deployment_environment_name)
