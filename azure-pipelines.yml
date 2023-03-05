@@ -58,6 +58,7 @@ steps:
    echo 'branch name: ' $(branchName)
    echo 'Build.SourceBranch: ' $(Build.SourceBranch)
    echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
+   echo 'deployment_environment_name: ' $deployment_environment_name
 
 # Delete staging slot
 - bash: |
