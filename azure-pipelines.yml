@@ -74,4 +74,4 @@ steps:
      --password $(SERVICE_PRINCIPAL_PASSWORD)
    echo 'Logged into Azure'
    echo ''
-   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
+  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
