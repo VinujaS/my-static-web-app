@@ -10,32 +10,67 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  servicePrincipal.name: TailspinVinu-Pipeline test-3c3c0194-6084-4ccc-8e1f-a2956bd10236
+  servicePrincipal.tenant: ca6c8e87-062c-4e26-9fe7-90ece01ce882
+
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '>=18.0.0'
-  displayName: 'Install Node.js'
+# - task: NodeTool@0
+#   inputs:
+#     versionSource: 'spec'
+#     versionSpec: '>=18.0.0'
+#   displayName: 'Install Node.js'
 
-- script: |
-    cd react-app && npm install
-    npm run build
-  displayName: 'npm install and build'
+# - script: |
+#     cd react-app && npm install
+#     npm run build
+#   displayName: 'npm install and build'
 
-- task: AzureStaticWebApp@0
-  inputs:
-    app_location: 'react-app'
-    output_location: 'build'
-    verbose: true
-    production_branch: 'main'
-  name: 'SWA'
-  env:
-    azure_static_web_apps_api_token: $(deployment-token)
+# - task: AzureStaticWebApp@0
+#   inputs:
+#     app_location: 'react-app'
+#     output_location: 'build'
+#     verbose: true
+#     production_branch: 'main'
+#   name: 'SWA'
+#   env:
+#     azure_static_web_apps_api_token: $(deployment-token)
   
-- bash: echo $(SWA.static_web_app_url)
+# - bash: echo $(SWA.static_web_app_url)
+#         echo $(Build.SourceVersionMessage)
 
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'github.com_VinujaS'
-    repositoryName: 'VinujaS/my-static-web-app'
-    comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+# - task: GitHubComment@0
+#   inputs:
+#     gitHubConnection: 'github.com_VinujaS'
+#     repositoryName: 'VinujaS/my-static-web-app'
+#     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+
+# - task: AzureStaticWebApp@0
+#   inputs:
+#     app_location: 'react-app'
+#     output_location: 'build'
+#     verbose: true
+#     production_branch: 'main'
+#   name: 'SWA'
+#   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
+#   env:
+#     azure_static_web_apps_api_token: $(deployment-token)
+
+# Delete staging slot
+- bash: |
+   # PR Closed, changes merged to main
+   echo 'PR close, changes merged to main'
+
+   # get the source version message
+   sourceVersionMessage="$(Build.SourceVersionMessage)"
+   echo 'build source version message: ' $sourceVersionMessage
+
+   # parse the PR number from the source version message
+   prNumber=$(echo $sourceVersionMessage| sed -r 's/^([^.]+).*$/\1/; s/^[^0-9]*([0-9]+).*$/\1/')
+   echo 'prNumber: ' $prNumber
+
+   # Login to Azure using service principal
+   echo 'Logging into Azure with service principal...'
+   az login --identity --username 81331368-11d4-4ab5-847b-af9c770ee3a5
+   echo 'Logged into Azure'
+   echo ''
