@@ -13,14 +13,14 @@ pool:
 variables:
   - name: 'branchName'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
-      value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+      branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
-      value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+      branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
   - name: 'deployment_environment_name'
-    ${{if eq(${{ $(branchName) }}, 'main')}}:
-      value: 'production'
-    ${{if ne(${{ $(branchName) }}, 'main')}}:
-      value: $(branchName)
+    ${{if eq(variables['branchName'], 'main')}}:
+      deployment_environment_name: 'production'
+    ${{if ne(variables['branchName'], 'main')}}:
+      deployment_environment_name: $(branchName)
 
 steps:
 - bash: |
