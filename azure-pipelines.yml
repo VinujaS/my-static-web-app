@@ -33,9 +33,45 @@ steps:
     azure_static_web_apps_api_token: $(deployment-token)
   
 - bash: echo $(SWA.static_web_app_url)
+        echo $(Build.SourceVersionMessage)
 
 - task: GitHubComment@0
   inputs:
     gitHubConnection: 'github.com_VinujaS'
     repositoryName: 'VinujaS/my-static-web-app'
     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+
+# - task: AzureStaticWebApp@0
+#   inputs:
+#     app_location: 'react-app'
+#     output_location: 'build'
+#     verbose: true
+#     production_branch: 'main'
+#   name: 'SWA'
+#   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
+#   env:
+#     azure_static_web_apps_api_token: $(deployment-token)
+
+# Delete staging slot
+- bash: |
+   # PR Closed, changes merged to main
+   echo 'PR close, changes merged to main'
+
+   # get the source version message
+   sourceVersionMessage="$(Build.SourceVersionMessage)"
+   echo 'build source version message: ' $sourceVersionMessage
+
+   # parse the PR number from the source version message
+   prNumber=$(echo $sourceVersionMessage| sed -r 's/^([^.]+).*$/\1/; s/^[^0-9]*([0-9]+).*$/\1/')
+   echo 'prNumber: ' $prNumber
+
+   # Login to Azure using service principal
+   echo 'Logging into Azure with service principal...'
+   az login \
+     --service-principal \
+     --username $(servicePrincipal.name) \
+     --tenant $(servicePrincipal.tenant) \
+     --password $(SERVICE_PRINCIPAL_PASSWORD)
+   echo 'Logged into Azure'
+   echo ''
+  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merged PR '))
