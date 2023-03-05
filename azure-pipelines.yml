@@ -41,7 +41,7 @@ steps:
 #     repositoryName: 'VinujaS/my-static-web-app'
 #     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
 
--bash: |
+- bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
 
 # Delete staging slot
