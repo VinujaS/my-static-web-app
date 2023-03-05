@@ -27,3 +27,5 @@ steps:
     output_location: 'build'
     verbose: true
     production_branch: 'main'
+  env:
+    azure_static_web_apps_api_token: $(deployment-token)
