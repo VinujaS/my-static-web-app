@@ -23,8 +23,8 @@ variables:
       value: $(branchName)
 
 steps:
-- bash: |
-    echo "##vso[task.setvariable deployment_environment_name=$(branc)]crushed tomatoes" # remember to use double quotes
+# - bash: |
+#     echo "##vso[task.setvariable deployment_environment_name=$(branc)]crushed tomatoes" # remember to use double quotes
 # - task: NodeTool@0
 #   inputs:
 #     versionSource: 'spec'
