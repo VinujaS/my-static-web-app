@@ -28,11 +28,14 @@ steps:
     output_location: 'build'
     verbose: true
     production_branch: 'main'
+  name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
+  
+- bash: echo $(SWA.static_web_app_url)
 
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'github.com_VinujaS'
-    repositoryName: 'VinujaS/my-static-web-app'
-    comment: 'View build at: ${{ steps.builddeploy.outputs.static_web_app_url }}'
+# - task: GitHubComment@0
+#   inputs:
+#     gitHubConnection: 'github.com_VinujaS'
+#     repositoryName: 'VinujaS/my-static-web-app'
+#     comment: 'View build at: ${{ steps.builddeploy.outputs.static_web_app_url }}'
