@@ -38,4 +38,4 @@ steps:
   inputs:
     gitHubConnection: 'github.com_VinujaS'
     repositoryName: 'VinujaS/my-static-web-app'
-    comment: 'View build at: $(SWA.static_web_app_url)'
+    comment: 'View build at: $(SWA.static_web_app_url) 🎉'
