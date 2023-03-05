@@ -1,4 +1,5 @@
 # Node.js with React
+
 # Build a Node.js project that uses React.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
@@ -29,3 +30,9 @@ steps:
     production_branch: 'main'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
+
+- task: GitHubComment@0
+  inputs:
+    gitHubConnection: 'github.com_VinujaS'
+    repositoryName: 'VinujaS/my-static-web-app'
+    comment: 'View build at: ${{ steps.builddeploy.outputs.static_web_app_url }}'
