@@ -22,9 +22,14 @@ variables:
     ${{if ne(variables['branchName'], 'main')}}:
       value: $(branchName)
 
-steps:
+# steps:
 # - bash: |
-#     echo "##vso[task.setvariable deployment_environment_name=$(branc)]crushed tomatoes" # remember to use double quotes
+#   if [[ "$branchName" == 'main' ]] 
+#     echo "##vso[task.setvariable deployment_environment_name="production"]"
+#   else
+#     echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
+#   echo 'deployment_environment_name: ' $deployment_environment_name
+
 # - task: NodeTool@0
 #   inputs:
 #     versionSource: 'spec'
@@ -60,7 +65,7 @@ steps:
    echo 'branch name: ' $(branchName)
    echo 'Build.SourceBranch: ' $(Build.SourceBranch)
    echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
-   echo 'deployment_environment_name: ' $deployment_environment_name
+   echo 'deployment_environment_name: ' $(deployment_environment_name)
 
 # Delete staging slot
 - bash: |
