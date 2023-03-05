@@ -15,7 +15,8 @@ variables:
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       value: 'production'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
-      value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+      value: 'test'
+      # value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
 steps:
 # - bash: |
@@ -44,7 +45,7 @@ steps:
     output_location: 'build'
     verbose: true
     production_branch: 'main'
-    deployment_environment: "$(deployment_environment_name)"
+    deployment_environment: $(deployment_environment_name)
   name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
