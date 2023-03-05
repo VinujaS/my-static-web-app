@@ -17,12 +17,14 @@ variables:
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
   - name: 'deployment_environment_name'
-    ${{if eq(variables['branchName'], 'main')}}:
+    ${{if eq($(branchName), 'main')}}:
       value: 'production'
-    ${{if ne(variables['branchName'], 'main')}}:
+    ${{if ne($(branchName), 'main')}}:
       value: $(branchName)
 
 steps:
+- bash: |
+    echo "##vso[task.setvariable deployment_environment_name=$(branc)]crushed tomatoes" # remember to use double quotes
 # - task: NodeTool@0
 #   inputs:
 #     versionSource: 'spec'
