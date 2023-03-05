@@ -44,6 +44,7 @@ steps:
     output_location: 'build'
     verbose: true
     production_branch: 'main'
+    deployment_environment: $(deployment_environment_name)
   name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
