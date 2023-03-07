@@ -49,9 +49,6 @@ steps:
   name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
-  
-- bash: echo $(SWA.static_web_app_url)
-        echo $(Build.SourceVersionMessage)
 
 - task: GitHubComment@0
   inputs:
