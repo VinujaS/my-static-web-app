@@ -90,7 +90,7 @@ steps:
 
    az staticwebapp environment delete -n ode-test-static-app \
      --environment-name $prNumber \
-     --resource-group static-web-app-test 
-     --yes
+     --resource-group static-web-app-test \
+     --yes \
      --debug
   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'))
