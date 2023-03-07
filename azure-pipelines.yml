@@ -89,7 +89,7 @@ steps:
    echo ''
 
    az staticwebapp environment delete -n ode-test-static-app \
-     --environment-name $(prNumber) \
+     --environment-name $prNumber \
      --resource-group static-web-app-test 
      --yes
      --debug
