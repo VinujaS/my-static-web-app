@@ -11,6 +11,7 @@ trigger:
 
 pr:
 - preview-*
+- main
 
 pool:
   vmImage: ubuntu-latest
