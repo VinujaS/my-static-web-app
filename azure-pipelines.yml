@@ -64,6 +64,7 @@ steps:
    echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
    echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
    echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
+   echo 'Build.Reason: ' $(Build.Reason)
 
 # Delete preview branch
 - bash: |
@@ -93,4 +94,4 @@ steps:
      --resource-group static-web-app-test \
      --yes \
      --debug
-  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'))
+  condition: and(succeeded(), or(startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'), startsWith(variables['Build.SourceVersionMessage'], 'PR closed')))
