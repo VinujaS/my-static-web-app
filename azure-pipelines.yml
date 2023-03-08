@@ -9,10 +9,8 @@ trigger:
     include:
       - main
 
-pr: 
-  branches:
-    include:
-    - preview-*
+pr:
+- preview-*
 
 pool:
   vmImage: ubuntu-latest
