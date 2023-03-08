@@ -7,7 +7,12 @@
 trigger:
   branches:
     include:
-      - preview-*
+      - main
+
+pr: 
+  branches:
+    include:
+    - preview-*
 
 pool:
   vmImage: ubuntu-latest
@@ -41,22 +46,22 @@ steps:
 #     npm run build
 #   displayName: 'npm install and build'
 
-- task: AzureStaticWebApp@0
-  inputs:
-    app_location: 'react-app'
-    output_location: 'build'
-    verbose: true
-    production_branch: 'main'
-    deployment_environment: $(deployment_environment_name)
-  name: 'SWA'
-  env:
-    azure_static_web_apps_api_token: $(deployment-token)
+# - task: AzureStaticWebApp@0
+#   inputs:
+#     app_location: 'react-app'
+#     output_location: 'build'
+#     verbose: true
+#     production_branch: 'main'
+#     deployment_environment: $(deployment_environment_name)
+#   name: 'SWA'
+#   env:
+#     azure_static_web_apps_api_token: $(deployment-token)
 
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'github.com_VinujaS'
-    repositoryName: 'VinujaS/my-static-web-app'
-    comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+# - task: GitHubComment@0
+#   inputs:
+#     gitHubConnection: 'github.com_VinujaS'
+#     repositoryName: 'VinujaS/my-static-web-app'
+#     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
 
 - bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
