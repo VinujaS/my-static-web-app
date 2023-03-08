@@ -7,6 +7,8 @@ const About = () => (
       <p>
         This project was created to help represent a fundamental app written
         with React. The shopping theme is used throughout the app.
+  
+        Should not trigger the pipeline as branch does not start with preview.
       </p>
       <br />
       <h2 className="title">Resources</h2>
