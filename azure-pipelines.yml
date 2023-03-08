@@ -49,12 +49,14 @@ steps:
   name: 'SWA'
   env:
     azure_static_web_apps_api_token: $(deployment-token)
+  condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
 
 - task: GitHubComment@0
   inputs:
     gitHubConnection: 'github.com_VinujaS'
     repositoryName: 'VinujaS/my-static-web-app'
     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+  condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
 
 - bash: |
    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
