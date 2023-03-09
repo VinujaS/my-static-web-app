@@ -95,4 +95,4 @@ steps:
      --resource-group static-web-app-test \
      --yes \
      --debug
-  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
