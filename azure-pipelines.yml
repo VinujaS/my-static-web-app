@@ -18,7 +18,7 @@ variables:
       value: '$(System.PullRequest.PullRequestNumber)'
       # value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
-steps:
+# steps:
 # - bash: |
 #   if [[ "$branchName" == 'main' ]]
 #   then
@@ -38,61 +38,124 @@ steps:
 #     cd react-app && npm install
 #     npm run build
 #   displayName: 'npm install and build'
-
-- task: AzureStaticWebApp@0
-  inputs:
-    app_location: 'react-app'
-    output_location: 'build'
-    verbose: true
-    production_branch: 'main'
-    deployment_environment: $(deployment_environment_name)
-  name: 'SWA'
-  env:
-    azure_static_web_apps_api_token: $(deployment-token)
+jobs:
+- job: ODE
+  displayName: ODE Build
   condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
+  steps:
+   - task: AzureStaticWebApp@0
+     inputs:
+        app_location: 'react-app'
+        output_location: 'build'
+        verbose: true
+        production_branch: 'main'
+        deployment_environment: $(deployment_environment_name)
+     name: 'SWA'
+     env:
+        azure_static_web_apps_api_token: $(deployment-token)
+   - task: GitHubComment@0
+     inputs:
+         gitHubConnection: 'github.com_VinujaS'
+         repositoryName: 'VinujaS/my-static-web-app'
+         comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+   - bash: |
+        echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
+        echo 'Build.SourceBranch: ' $(Build.SourceBranch)
+        echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
+        echo 'deployment_environment_name: ' $(deployment_environment_name)
+        echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
+        echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
+        echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
+   
+   - bash: |
+        # PR Closed, changes merged to main
+        echo 'PR close, changes merged to main'
 
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'github.com_VinujaS'
-    repositoryName: 'VinujaS/my-static-web-app'
-    comment: 'View build at: $(SWA.static_web_app_url) 🎉'
-  condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
+        # get the source version message
+        sourceVersionMessage="$(Build.SourceVersionMessage)"
+        echo 'build source version message: ' $sourceVersionMessage
 
-- bash: |
-   echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
-   echo 'Build.SourceBranch: ' $(Build.SourceBranch)
-   echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
-   echo 'deployment_environment_name: ' $(deployment_environment_name)
-   echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
-   echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
-   echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
+        # parse the PR number from the source version message
+        prNumber=$(echo $sourceVersionMessage| sed -r 's/^([^.]+).*$/\1/; s/^[^0-9]*([0-9]+).*$/\1/')
+        echo 'prNumber: ' $prNumber
 
-# Delete preview branch
-- bash: |
-   # PR Closed, changes merged to main
-   echo 'PR close, changes merged to main'
+        # Login to Azure using service principal
+        echo 'Logging into Azure with service principal...'
+        az login \
+            --service-principal \
+            --username $(servicePrincipal.name) \
+            --tenant $(servicePrincipal.tenant) \
+            --password $(SERVICE_PRINCIPAL_PASSWORD)
+        echo 'Logged into Azure'
+        echo ''
 
-   # get the source version message
-   sourceVersionMessage="$(Build.SourceVersionMessage)"
-   echo 'build source version message: ' $sourceVersionMessage
+        az staticwebapp environment delete -n ode-test-static-app \
+            --environment-name $prNumber \
+            --resource-group static-web-app-test \
+            --yes \
+            --debug
+        condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
 
-   # parse the PR number from the source version message
-   prNumber=$(echo $sourceVersionMessage| sed -r 's/^([^.]+).*$/\1/; s/^[^0-9]*([0-9]+).*$/\1/')
-   echo 'prNumber: ' $prNumber
+- job: Test
+  displayName: Test script
+  steps:
+   - bash: |
+        echo 'test script run to see if it works!'
 
-   # Login to Azure using service principal
-   echo 'Logging into Azure with service principal...'
-   az login \
-     --service-principal \
-     --username $(servicePrincipal.name) \
-     --tenant $(servicePrincipal.tenant) \
-     --password $(SERVICE_PRINCIPAL_PASSWORD)
-   echo 'Logged into Azure'
-   echo ''
+# - task: AzureStaticWebApp@0
+#   inputs:
+#     app_location: 'react-app'
+#     output_location: 'build'
+#     verbose: true
+#     production_branch: 'main'
+#     deployment_environment: $(deployment_environment_name)
+#   name: 'SWA'
+#   env:
+#     azure_static_web_apps_api_token: $(deployment-token)
+#   condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
 
-   az staticwebapp environment delete -n ode-test-static-app \
-     --environment-name $prNumber \
-     --resource-group static-web-app-test \
-     --yes \
-     --debug
-  condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
+# - task: GitHubComment@0
+#   inputs:
+#     gitHubConnection: 'github.com_VinujaS'
+#     repositoryName: 'VinujaS/my-static-web-app'
+#     comment: 'View build at: $(SWA.static_web_app_url) 🎉'
+#   condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
+
+# - bash: |
+#    echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
+#    echo 'Build.SourceBranch: ' $(Build.SourceBranch)
+#    echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
+#    echo 'deployment_environment_name: ' $(deployment_environment_name)
+#    echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
+#    echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
+#    echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
+
+# # Delete preview branch
+# - bash: |
+#    # PR Closed, changes merged to main
+#    echo 'PR close, changes merged to main'
+
+#    # get the source version message
+#    sourceVersionMessage="$(Build.SourceVersionMessage)"
+#    echo 'build source version message: ' $sourceVersionMessage
+
+#    # parse the PR number from the source version message
+#    prNumber=$(echo $sourceVersionMessage| sed -r 's/^([^.]+).*$/\1/; s/^[^0-9]*([0-9]+).*$/\1/')
+#    echo 'prNumber: ' $prNumber
+
+#    # Login to Azure using service principal
+#    echo 'Logging into Azure with service principal...'
+#    az login \
+#      --service-principal \
+#      --username $(servicePrincipal.name) \
+#      --tenant $(servicePrincipal.tenant) \
+#      --password $(SERVICE_PRINCIPAL_PASSWORD)
+#    echo 'Logged into Azure'
+#    echo ''
+
+#    az staticwebapp environment delete -n ode-test-static-app \
+#      --environment-name $prNumber \
+#      --resource-group static-web-app-test \
+#      --yes \
+#      --debug
+#   condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'Merge pull request'), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
