@@ -66,6 +66,7 @@ jobs:
         echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
         echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
         echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
+        echo 'System.PullRequest: ' $(System.PullRequest)
    
    - bash: |
         # PR Closed, changes merged to main
