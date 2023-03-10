@@ -43,7 +43,7 @@ jobs:
   displayName: ODE Build
   condition: and(succeeded(), startsWith(variables['System.PullRequest.SourceBranch'], 'preview-'))
   steps:
-     - bash: |
+   - bash: |
         echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
         echo 'Build.SourceBranch: ' $(Build.SourceBranch)
         echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
@@ -52,7 +52,6 @@ jobs:
         echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
         echo 'SWA.static_web_app_url: ' $(SWA.static_web_app_url)
         echo 'System.PullRequest: ' $(System.PullRequest)
-    
    - task: AzureStaticWebApp@0
      inputs:
         app_location: 'react-app'
