@@ -18,26 +18,6 @@ variables:
       value: '$(System.PullRequest.PullRequestNumber)'
       # value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
-# steps:
-# - bash: |
-#   if [[ "$branchName" == 'main' ]]
-#   then
-#     echo "##vso[task.setvariable deployment_environment_name="production"]"
-#   else
-#     echo "##vso[task.setvariable deployment_environment_name=$(branchName)]"
-#   fi
-#   echo 'deployment_environment_name: ' $deployment_environment_name
-
-# - task: NodeTool@0
-#   inputs:
-#     versionSource: 'spec'
-#     versionSpec: '>=18.0.0'
-#   displayName: 'Install Node.js'
-
-# - script: |
-#     cd react-app && npm install
-#     npm run build
-#   displayName: 'npm install and build'
 jobs:
 - job: ODE
   displayName: ODE Build
