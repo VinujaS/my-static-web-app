@@ -80,7 +80,12 @@ jobs:
   displayName: Test script
   steps:
    - bash: |
-        echo 'test script run to see if it works!'
+        echo 'deployment_environment: ' $(System.PullRequest.PullRequestId)
+        echo 'Build.SourceBranch: ' $(Build.SourceBranch)
+        echo 'System.PullRequest.SourceBranch: ' $(System.PullRequest.SourceBranch)
+        echo 'deployment_environment_name: ' $(deployment_environment_name)
+        echo 'System.PullRequest.PullRequestNumber: ' $(System.PullRequest.PullRequestNumber)
+        echo 'Build.SourceVersionMessage: ' $(Build.SourceVersionMessage)
 
 # - task: AzureStaticWebApp@0
 #   inputs:
