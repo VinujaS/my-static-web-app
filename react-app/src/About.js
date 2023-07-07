@@ -8,7 +8,7 @@ const About = () => (
         This project was created to help represent a fundamental app written
         with React. The shopping theme is used throughout the app.
 
-        Github actions has been added to this branch.
+        Github actions has been added to this branch. Testing if actions run when pull request edited.
       </p>
       <br />
       <h2 className="title">Resources</h2>
